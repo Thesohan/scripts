@@ -1,0 +1,133 @@
+Commands
+
+
+to connect with db on aws
+
+dev6->
+	dev4-> 
+
+sshuttle --dns --exclude 35.161.199.215 -r sohan.kathait@35.161.199.215 0.0.0.0/0
+
+qa--> 
+
+sshuttle --dns --exclude 54.70.237.210 -r sohan.kathait@54.70.237.210  0.0.0.0/0 
+
+
+pip install sshuttle==0.78.5
+
+env setup
+source ~/Desktop/env/.env_qa; cd ..; source bol/bin/activate; cd bolapi; python3 manage.py runserver;
+
+Prod chalhoub-> hostname: gravtyeui13.c9kkrydv58gm.eu-west-1.rds.amazonaws.com
+		DB name : gravtyeui13
+		username : eui13readonly
+
+https://bankofloyal.atlassian.net/wiki/spaces/DeployDoc/pages/1071087911/DB+Access+with+Token
+		password : generate token from above link
+
+
+env details- https://bankofloyal.atlassian.net/wiki/spaces/QD/pages/1097433278/Test+env+details
+env name -https://bankofloyal.atlassian.net/wiki/spaces/DeployDoc/pages/981237763/Gravty+Environments+Details
+
+DATABASE_URL	postgres://gravty:Gravty123@pgbouncer-ie-95e2fb65796d0d23.elb.eu-west-1.amazonaws.com:6432/webappdbme
+REDIS_URL	redis://redis-ie.jnkefi.0001.euw1.cache.amazonaws.com:6379/1
+
+Resolution = Infra Fix.  (as this was AWS setting change)
+we use Configuration Fix for anything like offer, program policy/setup etc.
+
+
+QA
+IP : 54.70.237.210
+EUI13
+IP : 108.128.109.136
+
+
+
+https://gravtyqa.gravtee.com/#!/version
+
+make a zip -> zip -r9 name.zip *
+
+kill process-> sudo lsof -i :8000   --> sudo kill pid
+
+Postgres data dump -> psql -U username -d dbname < filename
+
+Django admin
+https://jumeirah.qav2.gravtee.com/2b3f3d91-8e72-4a81-9c77-c161a1d8c0f6/
+
+5:09
+varun.ajwani@lji.io / Gravity@1234
+
+5:09
+log in on this url
+
+sa.sh env_name
+
+5:09
+open Program Policys
+
+{"sponsor_pin_validate": "100/hour", "enable_scoped_throttling": true, "reset_password_throttling_rate": "5/day", "do_reset_password_throttling_rate": "5/day", "location_pin_validate_throttling_rate": "100/hour"}
+
+To get jira ids from first tag to seand tag
+
+git-jira-ids backend-2.3.6.39...backend-2.3.7.2
+
+sh ./shuttle_access.sh IE
+curl ifconfig.me
+
+
+
+python3 manage.py populate_bit_data_in_new_columns_tenant --skip-public
+
+4:55
+https://github.com/BankofLoyal/bolapi/pull/5311
+
+4:58
+ssh gowthami.ananthaneni@14.0.3.75
+
+4:59
+sudo docker ps
+
+4:59
+sudo docker exec -it 94e7d562404b bash
+
+5:01
+pip3 install -r requirements/security.txt
+
+New
+
+7:53
+then bandit command
+bandit -r locations/ --ini .bandit
+
+
+
+./tag.sh
+
+
+Django admin : 
+https://maftest.qav2.gravtee.com/2b3f3d91-8e72-4a81-9c77-c161a1d8c0f6/
+
+
+import pdb 
+            pdb.set_trace()
+brew services start postgresql
+and
+brew services stop postgresql
+
+
+pgbouncer-nlb-qav2-2d6e288046498f1f.elb.us-west-2.amazonaws.com
+
+git update-ref HEAD release/2.3.6
+
+
+
+
+0010_previous_migration
+0011_next_migration
+0012_latest_migration
+
+Revert a migration: ./manage.py migrate my_app 0010_previous_migratio
+
+Export redis key value
+
+echo 'GET :1:role_member_attribute:cmrtest' | redis-cli -h localhost -p 9736 -n 1 > cmrtest_value.txt
