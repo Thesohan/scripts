@@ -10,6 +10,6 @@
     "node": ">=0.11.x"
   },
   "dependencies": {
-    "protagonist": "^2.2.1",
+    "protagonist": "^2.2.1"
   }
 }
