@@ -1,0 +1,49 @@
+const protagonist = require('protagonist');
+const fs = require('fs')
+
+function readFile(file){
+    fs.readFile(file, 'utf-8', (err, data) =>{
+        if (err){
+            console.log("Error while reading the file."+err)
+        }
+        else{
+            validate_data(data)
+        }
+    });
+}
+
+function parseData(contents){
+    logs = [];
+    errorCount=0;
+    warningCount=0;
+    contents.forEach(function (content) {
+        log={};
+        log["type"]=content["meta"]["classes"]["content"][0]["content"]
+        log["line"]=content["attributes"]["sourceMap"]["content"][0]['content'][0]["content"][0]["attributes"]["line"]["content"]
+        log["message"]=content['content']
+        logs[errorCount+warningCount]=log
+        if(log["type"]==="warning") {
+            warningCount += 1
+        }
+        else if(log["type"]==="error"){
+            errorCount+=1
+        }
+        });
+    console.log(JSON.stringify(logs, null, 2)+"\n"+"Errors: "+errorCount+"\n"+"Warnings: "+warningCount+"\n"+"Total: "+(warningCount+errorCount)+"\n");
+}
+
+function validate_data(data) {
+
+    protagonist.validate(data).then((parseResult) => {
+    parseData(parseResult["content"])
+         // console.log(JSON.stringify(parseResult, null, 2));
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+}
+
+readFile('apiary.apib')
+
+

@@ -11,6 +11,7 @@
 #    # Run the welcome/run job in its own container
 #    jobs:
 #      - welcome/run
+
 version: 2
 jobs:
   build:
@@ -19,5 +20,12 @@ jobs:
       : "circleci/node:7.10"
     steps: |-
         — checkout
-        - run:| npm install protagonist - run:| npm test
+        - run:| npm install protagonist - run:| node test.js
     working_directory: ~/scripts
+
+
+workflows:
+  version: 2
+  Build_Test:
+    jobs:
+      - build
