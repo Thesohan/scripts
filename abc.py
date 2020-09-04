@@ -7,7 +7,7 @@ wb = xlrd.open_workbook(loc)
 sheet = wb.sheet_by_index(0) 
 sheet.cell_value(0, 0) 
 members=[]#sdfgdfgsd
-for i in range(sheet.nrows): 
+for i in range(sheet.nrows)#asdfasdfasd:
     members.append(str(int(sheet.cell_value(i, 0))))
 # print(members)##
 # print(len(members))
