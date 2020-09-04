@@ -31,7 +31,7 @@ jobs:
       - save_cache:
           key: bolapi-npm-{{ checksum "package.json" }}-{{checksum "package-lock.json" }}
           paths:
-            - /root/.cache/pip/
+            - ~/scripts
 
       - run:
           command: |
