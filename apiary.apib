@@ -1,32 +1,1958 @@
-# Data Structures
-## A (A)
-
-
 FORMAT: 1A
+HOST: https://api.gravty.me
 
-# Group Messages
+# GRAVTY Integration API's
 
-# Message [/messages/{id}]
+# Gravty APIs
 
-+ Parameters
-    + id ... Id of a message
-        + Values
-            + `1`
-            + `2`
-            + `3`
+* You need to use your API key and the Authorization Token in the header to submit the data for the following APIs.
+    + Headers
+        + x-api-key: {API key}
+        + Authorization: JWT {token}
+* JWT Authorization token is the token generated for a particular user when system user or a member is created or logs in.
+* JWT Authorization token expires when the password is changed/reset.
+* JWT Authorization token is identified with the keyword 'token' in the Response of the API.
+* The JWT Authorization token expiration time is also available as a part of the Response, with the keyword 'expires_in'. This expiration time value is in seconds.
 
-+ Attributes
-    + id (number)
-    + message: Hello World! (string) - The Message
+## BIT API
+BIT stands for B=Behaviours, I=Influences, and T=Transactions
+You can post a BIT for any member activity.
 
-## Retrieve Message [GET]
+### Errors and Response codes of in POST BIT API
+
+| Error Code                            | Error Message                                                 | Response Code  |
+|---------------------------------------|---------------------------------------------------------------|----------------|
+| INSUFFICIENT_ACCOUNT_BALANCE          | INSUFFICIENT_ACCOUNT_BALANCE                                  |                |
+| PAY_IN_POINTS_FAILURE                 | FAILED TO PAY IN POINTS                                       |                |
+| MANDATORY_ATTRIBUTE_MISSING           | MANDATORY_ATTRIBUTE_MISSING                                   |                |
+| RESOURCE_NOT_FOUND                    | RESOURCE_NOT_FOUND                                            |                |
+| RULES_EXECUTION_ERROR                 | RULES_EXECUTION_ERROR                                         |                |
+| SYSTEM_FAILURE                        | SYSTEM_FAILURE                                                |                |
+| DATA_ERROR                            | DATA_ERROR                                                    |                |
+| MEMBER_NOT_FOUND                      | Member Not Found                                              |                |
+| MEMBER_UPDATE_FAILED                  | MEMBER_UPDATE_FAILED                                          |                |
+| MEMBER_LOCKED                         | MEMBER_LOCKED                                                 |                |
+| REWARD_LIMIT_EXHAUSTED                | Cannot reward beyond set limit                                |                |
+| REDEMPTION_LIMIT_EXHAUSTED            | Cannot redeem beyond set limit                                |                |
+| TIME_INTERVAL_NOT_SATISFIED           | Time criteria between two consecutive BITs is not satisfied   |                |
+| UNKNOWN                               | UNKNOWN ERROR                                                 |                |
+| PRIVILEGE_NOT_USABLE                  | Privilege cannot be used                                      |                |
+| PRIVILEGE_NOT_FOUND                   | Privilege does not exist                                      |                |
+| PRIVILEGE_EXPIRED                     |Privilege has expired                                          |                |
+| PRIVILEGE_NOT_SAVED                   | Privilege could not be saved                                  |                |
+| ENROLLMENT_RULES_NOT_QUALIFIED        | ENROLLMENT_RULES_NOT_QUALIFIED                                |                |
+| PRIVILEGE_AVAILMENT_FAILURE           | Could not Avail Privilege                                     |                |
+| UNSATISFIED_MEMBERSHIP_STAGE_POLICY   | Member does not qualify                                       |                |
+| INTERNAL_SERVER_ERROR                 | Internal Server Error                                         |                |
+| UNAUTHORIZED                          | Unauthorized                                                  |                |
+| FORBIDDEN                             | Forbidden                                                     |                |
+| CANNOT_CANCEL                         | Can't cancel the bit                                          |                |
+| BIT_NOT_FOUND                         | Bit not found                                                 |                |
+| ALREADY_CANCELLED                     | Already have cancel request                                   |                |
+| authentication_expired                | Signature has expired.                                        |                |
+| authentication_failed                 | Error decoding signature.                                     |                |
+| not_authenticated                     | Authentication credentials were not provided.                 |                |
+| DUPLICATE_BIT                         | Duplicate bit                                                 |                |
+| BIT_TYPE_MANDATORY                    | BIT Type is Mandatory                                         |                |
+| MEMBERSHIP_STAGE_IS_MISSING           | Membership stage is mandatory                                 |                |
+| DUPLICATE_BIT_IN_PROGRESS             | Duplicate bit in progress                                     |                |
+| INVALID_MEMBER_ID                     | Invalid member id                                             |                |
+| CURRENCY_CONVERSION_NOT_FOUND         | Currency Conversion is not found                              |                |
+|------------------------------------------------------------------------------------------------------------------------|
+
+## System User Login [/v1/login/]
+
+### Get user token and details [POST]
+This is the API used for the system user to retrieve the token by logging into the program.
+
+In the response you will get `token`.
+This represents JWT token and needed for calling subsequent APIs.
+Gravty's JWT token is valid for 4 hours and you need to call refresh token API to refresh existing token or login again.
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+
+    + Body
+
+            {
+                    "username": "foo",
+                    "password": "bar"
+            }
+
+
 + Response 200 (application/json)
-    + Attributes (Message)
 
-## Delete Message [DELETE]
-+ Response 204
+    + Body
+
+            {
+                "is_programuser": false,
+                "user": 1,
+                "success": true,
+                "is_sponsoruser": true,
+                "is_superuser": false,
+                "token": "really.long.access.token.string",
+                "expires_in": 2400,
+                "sponsor": "Loyalty management"
+                "version_counter": 0,
+                "active": false,
+                "profile_image": null,
+                "mobile": "",
+                "role": {
+                    "id": 1,
+                    "version_counter": 0,
+                    "name": "Program Manager",
+                    "is_program_user": true,
+                    "can_view_offer": true,
+                    "can_edit_offer": true,
+                    "can_view_sponsor": true,
+                    "can_edit_sponsor": true,
+                    "can_view_program": true,
+                    "can_edit_program": true,
+                    "can_view_bit": true,
+                    "can_edit_bit": true,
+                    "can_view_dashboard": true,
+                    "can_view_member": true,
+                    "can_edit_member": true,
+                    "can_view_member_details": true
+                },
+                "sponsor_id": 1,
+                "sponsor_name": "gravty sponsor"
+            }
+
+## Refresh JWT Token [/v1/jwt/refresh-token/]
+
+### Get user token and details [POST]
+This is the API used to refresh token by passing the expired JWT token
 
 
-# Name
++ Request (application/json)
+  + Headers
 
-# GET /
+            x-api-key: "{Your API Key}"
+
+    + Body
+
+            {
+                "token": "really.long.access.token.string"
+            }
+
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "token": "really.long.access.token.string",
+                "expires_in": "14400"
+            }
+
+
+## Member Enrolment [/v2/members/]
+
+### Create Member[POST]
+This API is used in enrollment of members in the loyalty program
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+
+    + Body
+
+            {
+                  "mobile": "+918099183178",
+                  "user": {
+                        "first_name": "Scott",
+                        "last_name": "Meyer"
+                   },
+                  "enrolling_location": "RDS40",
+                  "enrolling_sponsor": 1,
+                  "extra_data": {
+                    "pos_id": "XYZ123",
+                    "cashier_id": "ABC123"
+                  }
+            }
+
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                        "id": 34,
+                        "user": {
+                            "email": "",
+                            "first_name": "Scott",
+                            "last_name": "Meyer"
+                        },
+                        "profile_image": null,
+                        "member_id": "M2Z6JXC",
+                        "creditcard_number": null,
+                        "mobile": "+918099183178",
+                        "favorite_store": null,
+                        "enrollment_touchpoint": null,
+                        "enrollment_channel": null,
+                        "enrolling_sponsor": 1,
+                        "enrolling_location": "RDS40",
+                        "date_of_joining": "2019-03-22",
+                        "membership_tenure": 0,
+                        "favorite_sponsors": [],
+                        "extra_data": {
+                            "pos_id": "XYZ123",
+                            "cashier_id": "ABC123"
+                        },
+                        "last_activity_date": "2019-03-22T11:58:29.543000+05:30",
+                        "days_since_bit": 0,
+                        "last_accrual_date": null,
+                        "last_redemption_date": null,
+                        "merged_member": null,
+                        "enrollment_referrer": null,
+                        "validated": false,
+                        "version_counter": 1553235163466283,
+                        "member_type": "CONSUMER",
+                        "family_designation": null,
+                        "balances": [],
+                        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VyX2lkIjozOCwidXNlcm5hbWUiOiJNMlo2SlhDIiwiZXhwIjoxNTUzMjUwNTEwLCJlbWFpbCI6IiIsIm9yaWdfaWF0IjoxNTUzMjM2MTEwfQ.Vua5BMJPE_w5T8tuxcVSVeXq5zc0Sqsuc4roL1ptP5B3qP84GXhrc4iS8VgnS8XXv1N3wTYwQ__PPvILPMGIF6DQaSeR5xuIGjieMW__iAHxPx6blMRpuGkRgs-ZmnraQ4lemjkWTs7B69qsjhgD3-j3nDldbmN2pjCQ287_zU_TwSL6rM7rnQ1EwbG_Nqz91XcWoMUldrBcWQAcvnpDYShhOitoLkuNxZXeynsx2qxWC0bG_mHtY273MJqzPEW556lo9H09YENqgjzx3WKQHIiJ9hTiD3KBFDSpPLeifN23p4aW2bI1cVd51zNWwK36iZzXpjXkcbP_-bEY7DvXTA",
+                        "expires_in": "14400"
+            }
+
++ Response 400 (application/json)
+
+        //Duplicate Member Response
+        {
+            "error": {
+            "message": "Member already exists",
+            "code": "member_exists",
+            "type": "ERROR",
+            "status_code": 400
+        }
+        }
++ Response 400 (application/json)
+
+        //Invalid enrolling_location Member Response
+        {
+            "error": {
+            "enrolling_location": [
+                {
+                    "message": "Object with location_code=xyz does not exist.",
+                    "code": "does_not_exist"
+                }
+            ]
+        }
+        }
+
+## Find Members [/v1/members/list/?mobile=%2B918099503185]
+### Find Members [GET]
+Member List API returns list of the members. It takes optional query parameters as criteria to filter the results. For example, you can provide mobile as filter parameter to get the member registered with the given mobile number.
+
+* Note - always encode the url before invoking this api
+- refer balance array for getting member current balance details
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+            Authorization: "JWT {Your Authorization Token}"
+
++ Response 200 (application/json)
+
+
+        [
+            {
+                "id": 5,
+                "user": {
+                    "first_name": "",
+                    "last_name": "",
+                    "email": null
+                },
+                "profile_image": null,
+                "member_id": "NGYP94Q",
+                "creditcard_number": null,
+                "mobile": "+918099503185",
+                "favorite_store": null,
+                "enrollment_touchpoint": null,
+                "enrollment_channel": null,
+                "enrolling_sponsor": 1,
+                "enrolling_location": null,
+                "date_of_joining": "2019-02-22",
+                "membership_tenure": 3,
+                "favorite_sponsors": [],
+                "extra_data": {},
+                "last_activity_date": "2019-02-22T17:06:00+05:30",
+                "days_since_bit": 3,
+                "last_accrual_date": "2019-02-22T17:06:00+05:30",
+                "last_redemption_date": null,
+                "merged_member": null,
+                "enrollment_referrer": null,
+                "validated": true,
+                "version_counter": 1550833401784482,
+                "member_type": "CONSUMER",
+                "family_designation": null,
+                "balances": [
+                    {
+                        "loyalty_account_id": 1,
+                        "loyalty_account": "Happy Points",
+                        "balance": 10,
+                        "amount": 10
+                    }
+                ],
+                "membership_stage": "Active",
+                "member_name": null,
+                "age": null,
+                "bit_value": null,
+                "transaction_value": null,
+                "influence_value": null,
+                "behaviour_value": null,
+                "bit_rank": null,
+                "bit_class": null,
+                "relationship_cost": null,
+                "bit_score": null,
+                "fb_friends": null,
+                "tier_class": null,
+                "tier_start_date": null,
+                "tier_end_date": null,
+                "salutation": null,
+                "middle_name": null,
+                "alias": null,
+                "date_of_birth": null,
+                "gender": null,
+                "marital_status": null,
+                "wedding_anniversary": null,
+                "number_of_children": null,
+                "mother_tongue": null,
+                "nationality": null,
+                "pin": null,
+                "address_line1": null,
+                "address_line2": null,
+                "area": null,
+                "city": null,
+                "region": null,
+                "zipcode": null,
+                "country": null,
+                "ethnicity": null,
+                "annual_income": null,
+                "highest_education": null,
+                "company": null,
+                "job_title": null,
+                "favorite_restaurant": null,
+                "mode_of_communication": null,
+                "food_preference": null,
+                "favorite_drink": null,
+                "favorite_sport": null,
+                "favorite_food": null,
+                "hobbies": null,
+                "preferred_location": null,
+                "receive_offers": null,
+                "corporate": null,
+                "institution": null,
+                "family_head": null,
+                "passport_number": null,
+                "favorite_categories": null,
+                "latitude": null,
+                "longitude": null,
+                "family_head_relationship": null,
+                "family_head_points_share": null,
+                "associate_id": null,
+                "external_id": null,
+                "facebook_id": null,
+                "twitter_id": null,
+                "linkedin_id": null,
+                "pinterest_id": null,
+                "googleplus_id": null,
+                "program_opt_in": null
+            }
+        ]
+
++ Response 200 (application/json)
+
+        //Empty response (in case of no member
+            record found for specified query)
+           [
+           ]
+
++ Response 400 (application/json)
+
+        //Token Expired
+        {
+            "error": {
+                "message": "Signature has expired.",
+                "code": "authentication_expired"
+            }
+        }
++ Response 400 (application/json)
+
+        //Invalid token passed
+        {
+               "error": {
+                "message": "Error decoding signature.",
+                "code": "authentication_failed"
+            }
+        }
+
+## GET Member [/v2/members/{{member_id}}/]
+### GET Member [GET /v2/members/{{member_id}}/]
+Get Member api will return member details based on the member id passed
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+            Authorization: "JWT {Your Authorization Token}"
+
++ Response 200 (application/json)
+
+
+         {
+          "data": {
+            "id": 57,
+            "user": {
+              "email": null,
+              "first_name": "Shashi",
+              "last_name": "Raj"
+            },
+            "profile_image": null,
+            "member_id": "F8VQD2D",
+            "creditcard_number": null,
+            "mobile": "8513973974",
+            "favorite_store": null,
+            "enrollment_touchpoint": 1,
+            "enrollment_channel": "CSC",
+            "enrolling_sponsor": 1,
+            "enrolling_location": null,
+            "date_of_joining": "2019-04-30",
+            "membership_tenure": 14,
+            "favorite_sponsors": [
+
+            ],
+            "extra_data": {
+
+            },
+            "last_activity_date": "2019-05-14T14:10:00+05:30",
+            "days_since_bit": 0,
+            "last_accrual_date": "2019-05-14T14:10:00+05:30",
+            "last_redemption_date": "2019-05-01T15:20:00+05:30",
+            "merged_member": null,
+            "enrollment_referrer": null,
+            "validated": true,
+            "version_counter": 1556617766102921,
+            "member_type": "CONSUMER",
+            "family_designation": null,
+            "enrollment_user": "samir.shah@lji.io",
+            "balances": [
+              {
+                "loyalty_account": "Happy Points",
+                "balance": 287.0,
+                "balance_currency": "INR",
+                "balance_currency_amount": 71.75,
+                "total_accrued": 487.0,
+                "total_redeemed": 200.0,
+                "total_expired": null
+              }
+            ],
+            "membership_stage": "Active",
+            "member_name": null,
+            "age": null,
+            "bit_value": null,
+            "transaction_value": null,
+            "influence_value": null,
+            "behaviour_value": null,
+            "bit_rank": null,
+            "bit_class": null,
+            "relationship_cost": null,
+            "bit_score": null,
+            "fb_friends": null,
+            "tier_class": null,
+            "tier_start_date": null,
+            "tier_end_date": null,
+            "salutation": null,
+            "middle_name": null,
+            "alias": null,
+            "date_of_birth": null,
+            "gender": null,
+            "marital_status": null,
+            "wedding_anniversary": null,
+            "number_of_children": null,
+            "mother_tongue": null,
+            "nationality": null,
+            "pin": null,
+            "address_line1": null,
+            "address_line2": null,
+            "area": null,
+            "city": null,
+            "region": null,
+            "zipcode": null,
+            "country": null,
+            "ethnicity": null,
+            "annual_income": null,
+            "highest_education": null,
+            "company": null,
+            "job_title": null,
+            "favorite_restaurant": null,
+            "mode_of_communication": null,
+            "food_preference": null,
+            "favorite_drink": null,
+            "favorite_sport": null,
+            "favorite_food": null,
+            "hobbies": null,
+            "preferred_location": null,
+            "receive_offers": null,
+            "corporate": null,
+            "institution": null,
+            "family_head": null,
+            "passport_number": null,
+            "favorite_categories": null,
+            "latitude": null,
+            "longitude": null,
+            "family_head_relationship": null,
+            "family_head_points_share": null,
+            "associate_id": null,
+            "external_id": null,
+            "facebook_id": null,
+            "twitter_id": null,
+            "linkedin_id": null,
+            "pinterest_id": null,
+            "googleplus_id": null,
+            "program_opt_in": null,
+            "points_expiration": [
+              {
+                "loyalty_account": "Happy Points",
+                "points": 287.0,
+                "expiration_date": "2020-06-01T00:00:00+05:30"
+              }
+            ]
+          }
+        }
+
+
+## OTP Services  [/v1/external/services/]
+* This API's is used to generate an OTP for a specific service which is used for subsequent authorization.
+
+### Generate OTP (Public) [POST /v1/members/{{member_id}}/otp/]
+
+For this API will not return OTP in response where as OTP will be sent to member's mobile number
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+            Authorization: "JWT {Your Authorization Token}"
+
+    + body
+
+        {
+          "action":"GENERATE",
+          "service": "REDEMPTION_OTP"
+        }
+
+
++ Response 200 (application/json)
+
+        {
+            "status": "Success"
+        }
+
+
+
+## BURN [/v1/bits/ ]
+
+### Burn in currency [POST]
+
+On success of redemption the http status will be 201 created and points_redeemed flag in response will be true
+
+* `x-gravty-otp` is optional and needed only when redemption with OTP is enabled.
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+            x-gravty-otp: "{OTP}"
+
+
+    + Body
+
+            {
+               "h_program_id":14,
+               "h_member_login":"+918099503185",
+               "h_member_id": "NGYP94Q",
+               "h_bit_date":"2019-02-24T03:18-03:00",
+               "h_sponsor_id":1,
+               "h_bit_category":"ACCRUAL",
+               "h_bit_type":"PAYMENT_WITH_POINTS",
+               "h_pay_in_amount":5,
+               "h_bit_currency":"INR",
+               "h_location":null,
+               "h_pos_id":null,
+               "h_bit_source_generated_id":"TX1234",
+               "h_cashier_id":null,
+            }
+
++ Response 201 (application/json)
+
+
+    + Body
+
+            {
+                    "original_bit": {
+                    "header": {
+                        "h_member_login": "+918099503185",
+                        "h_bit_date": "2019-02-24T03:18-03:00",
+                        "h_sponsor_id": 1,
+                        "h_bit_category": "ACCRUAL",
+                        "h_location": null,
+                        "h_cashier_id":null,
+                        "h_bit_currency":"INR",
+                        "h_bit_type": "PAYMENT_WITH_POINTS",
+                        "h_pay_in_amount": 5,
+                        "h_program_id": 14,
+                        "h_member_id": "NGYP94Q"
+                    },
+                    "lines": [],
+                    "payment_details": []
+                },
+                "member": {
+                    "version": 3,
+                    "member_id": "NGYP94Q",
+                    "joining_date": 0,
+                    "last_bit_date": 0,
+                    "sponsor_id": 1,
+                    "attributes": {
+                        "member_id": "NGYP94Q",
+                        "member_type": "CONSUMER",
+                        "mobile": "+918099503185",
+                        "date_of_joining": "2019-02-22",
+                        "last_activity_date": "2019-02-24T03:18-03:00",
+                        "membership_stage": "2",
+                        "last_accrual_date": "2019-02-22T17:06+05:30",
+                        "enrolling_sponsor": "1",
+                        "last_redemption_date": "2019-02-24T03:18-03:00"
+                    },
+                    "multi_value_attributes": {},
+                    "mto": {},
+                    "loyalty_balances": {
+                        "1": 5
+                    },
+                    "affiliated_sponsors": {
+                        "1": true
+                    }
+                },
+                "offer_actions": [
+                    {
+                        "offer_id": "5",
+                        "rule_id": "tag",
+                        "type": "REDEEM_POINTS",
+                        "subject": "1",
+                        "value_n": 5,
+                        "value_s": null,
+                        "operator": null,
+                        "privilege_quantity": 0,
+                        "attribute_type": null,
+                        "reward_tags": [
+                            "BASE"
+                        ]
+                    }
+                ],
+                "assigned_privileges": [],
+                "availed_privileges": [],
+                "processing_date": "2019-02-25T14:39:41.891+0000",
+                "bit_id": "JSIIUPC0NH",
+                "points_rewarded": false,
+                "points_redeemed": true,
+                "status": "SUCCESS",
+                "error": null,
+                "errors": []
+            }
+
++ Response 400 (application/json)
+
+        //Token Expired
+        {
+            "error": {
+                "message": "Signature has expired.",
+                "code": "authentication_expired"
+            }
+        }
++ Response 400 (application/json)
+
+        //Invalid token passed
+        {
+               "error": {
+                "message": "Error decoding signature.",
+                "code": "authentication_failed"
+            }
+        }
++ Response 400 (application/json)
+
+         //Insuffcient balance to redeem points
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+918099503185",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                    "h_bit_currency":"INR",
+                    "h_bit_type": "PAYMENT_WITH_POINTS",
+                    "h_pay_in_amount": 5000,
+                    "h_pos_id": null,
+                    "h_program_id": 14,
+                    "h_member_id": "NGYP94Q"
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T15:49:16.660+0000",
+            "bit_id": "JSIIUPC01C",
+            "errors": [
+                {
+                    "code": "INSUFFICIENT_ACCOUNT_BALANCE",
+                    "message": "INSUFFICIENT_ACCOUNT_BALANCE"
+                }
+            ],
+            "status": "FAILED",
+            "error": {
+                "code": "INSUFFICIENT_ACCOUNT_BALANCE",
+                "message": "INSUFFICIENT_ACCOUNT_BALANCE"
+            },
+            "points_rewarded": false,
+            "points_redeemed": false,
+            "member": null,
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "offer_actions": []
+        }
+
++ Response 400 (application/json)
+
+        // invalid member details passed in request
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+9180995031s85",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                    "h_bit_type": "PAYMENT_WITH_POINTS",
+                    "h_pay_in_amount": 5000,
+                    "h_pos_id": null,
+                    "h_cashier_id":null,
+                    "h_program_id": 14
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T15:51:46.557+0000",
+            "bit_id": "JSKISFP9H5",
+            "errors": [
+                {
+                    "code": "MEMBER_NOT_FOUND",
+                    "message": "Member Not Found"
+                }
+            ],
+            "status": "FAILED",
+            "error": {
+                "code": "MEMBER_NOT_FOUND",
+                "message": "Member Not Found"
+            },
+            "points_rewarded": false,
+            "points_redeemed": false,
+            "member": null,
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "offer_actions": []
+        }
+
+
+
+### Burn in Points [POST]
+
+On success of redemption the http status will be 201 created and points_redeemed flag in response will be true
+
+* `x-gravty-otp` is optional and needed only when redemption of points with OTP is enabled.
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+            x-gravty-otp: "{OTP}"
+
+
+    + Body
+
+            {
+               "h_program_id":14,
+               "h_member_login":"+918099503185",
+               "h_member_id": "NGYP94Q",
+               "h_bit_date":"2019-02-24T03:18-03:00",
+               "h_sponsor_id":1,
+               "h_bit_category":"ACCRUAL",
+               "h_bit_type":"PAYMENT_WITH_POINTS",
+               "h_pay_in_points":5,
+               "h_bit_source_generated_id":"TX1234",
+               "h_location":null,
+               "h_pos_id":null,
+               "h_cashier_id":null,
+            }
+
++ Response 201 (application/json)
+
+
+    + Body
+
+            {
+                    "original_bit": {
+                    "header": {
+                        "h_program_id": 14,
+                        "h_member_login": "+918099503185",
+                        "h_member_id": "NGYP94Q"
+                        "h_bit_date": "2019-02-24T03:18-03:00",
+                        "h_sponsor_id": 1,
+                        "h_bit_category": "ACCRUAL",
+                        "h_bit_type": "PAYMENT_WITH_POINTS",
+                        "h_location": null,
+                        "h_cashier_id":null,
+                        "h_pay_in_points": 5
+                    },
+                    "lines": [],
+                    "payment_details": []
+                },
+                "member": {
+                    "version": 3,
+                    "member_id": "NGYP94Q",
+                    "joining_date": 0,
+                    "last_bit_date": 0,
+                    "sponsor_id": 1,
+                    "attributes": {
+                        "member_id": "NGYP94Q",
+                        "member_type": "CONSUMER",
+                        "mobile": "+918099503185",
+                        "date_of_joining": "2019-02-22",
+                        "last_activity_date": "2019-02-24T03:18-03:00",
+                        "membership_stage": "2",
+                        "last_accrual_date": "2019-02-22T17:06+05:30",
+                        "enrolling_sponsor": "1",
+                        "last_redemption_date": "2019-02-24T03:18-03:00"
+                    },
+                    "multi_value_attributes": {},
+                    "mto": {},
+                    "loyalty_balances": {
+                        "1": 5
+                    },
+                    "affiliated_sponsors": {
+                        "1": true
+                    }
+                },
+                "offer_actions": [
+                    {
+                        "offer_id": "5",
+                        "rule_id": "tag",
+                        "type": "REDEEM_POINTS",
+                        "subject": "1",
+                        "value_n": 5,
+                        "value_s": null,
+                        "operator": null,
+                        "privilege_quantity": 0,
+                        "attribute_type": null,
+                        "reward_tags": [
+                            "BASE"
+                        ]
+                    }
+                ],
+                "assigned_privileges": [],
+                "availed_privileges": [],
+                "processing_date": "2019-02-25T14:39:41.891+0000",
+                "bit_id": "JSIIUPC0NH",
+                "points_rewarded": false,
+                "points_redeemed": true,
+                "status": "SUCCESS",
+                "error": null,
+                "errors": []
+            }
+
++ Response 400 (application/json)
+
+        //Token Expired
+        {
+            "error": {
+                "message": "Signature has expired.",
+                "code": "authentication_expired"
+            }
+        }
++ Response 400 (application/json)
+
+        //Invalid token passed
+        {
+            "error": {
+                "message": "Error decoding signature.",
+                "code": "authentication_failed"
+            }
+        }
++ Response 400 (application/json)
+
+         //Insuffcient balance to redeem points
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+918099503185",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                    "h_bit_currency":"INR",
+                    "h_bit_type": "PAYMENT_WITH_POINTS",
+                    "h_pay_in_amount": 5000,
+                    "h_pos_id": null,
+                    "h_program_id": 14,
+                    "h_member_id": "NGYP94Q"
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T15:49:16.660+0000",
+            "bit_id": "JSIIUPC01C",
+            "status": "FAILED",
+            "error": {
+                "code": "INSUFFICIENT_ACCOUNT_BALANCE",
+                "message": "INSUFFICIENT_ACCOUNT_BALANCE"
+            },
+            "points_rewarded": false,
+            "points_redeemed": false,
+            "member": null,
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "offer_actions": []
+        }
+
++ Response 400 (application/json)
+
+        // invalid member details passed in request
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+9180995031s85",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                    "h_bit_type": "PAYMENT_WITH_POINTS",
+                    "h_pay_in_amount": 5000,
+                    "h_pos_id": null,
+                    "h_cashier_id":null,
+                    "h_program_id": 14
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T15:51:46.557+0000",
+            "bit_id": "JSKISFP9H5",
+            "errors": [
+                {
+                    "code": "MEMBER_NOT_FOUND",
+                    "message": "Member Not Found"
+                }
+            ],
+            "status": "FAILED",
+            "error": {
+                "code": "MEMBER_NOT_FOUND",
+                "message": "Member Not Found"
+            },
+            "points_rewarded": false,
+            "points_redeemed": false,
+            "member": null,
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "offer_actions": []
+        }
+
+## EARN [/v1/bits/]
+
+### EARN POINTS [POST]
+
++ Earn specification
+    + "h_bit_amount" is the amount of the transaction based upon it the points will be rewarded to the member.
+    + on sucess the response status will be 201 created
+    + if points are rewards to member then points_rewarded flag will be true
+
++ Request (application/json)
+   + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
+
+    + Body
+
+            {
+               "h_member_login":"+918099503185",
+               "h_bit_date":"2019-02-24T03:18-03:00",
+               "h_sponsor_id":1,
+               "h_program_id":14,
+               "h_bit_category":"ACCRUAL",
+               "h_location":null,
+               "h_cashier_id":null,
+               "h_bit_source_generated_id":"TX1234",
+               "h_bit_currency":"INR",
+               "h_bit_type":"SPEND",
+               "h_bit_amount":1200,
+               "h_pos_id":null,
+               "lines": [
+                {
+                     "l_product_external_id" : "skuid1",
+                      "l_quantity":3,
+                      "l_amount":500
+                },
+                  {
+                     "l_product_external_id" : "skuid2",
+                      "l_quantity":2,
+                      "l_amount":700
+                }
+              ]
+            }
+
++ Response 201 (application/json)
+
+
+    + Body
+
+            {
+                "original_bit": {
+                "header": {
+                    "h_member_login": "+918099503185",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_program_id": 14,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                    "h_cashier_id":null,
+                    "h_bit_type": "SPEND",
+                    "h_bit_currency":"INR",
+                    "h_bit_amount": 1200,
+                    "h_pos_id": null,
+                    "h_bit_source_generated_id":"TX1234",
+                    "h_member_id": "NGYP94Q"
+                },
+                "lines": [
+                    {
+                        "l_product_external_id": "skuid1",
+                        "l_quantity": 3,
+                        "l_amount": 500
+                    },
+                    {
+                        "l_product_external_id": "skuid2",
+                        "l_quantity": 2,
+                        "l_amount": 700
+                    }
+                ],
+                "payment_details": []
+            },
+            "member": {
+                "version": 6,
+                "member_id": "NGYP94Q",
+                "joining_date": 0,
+                "last_bit_date": 0,
+                "sponsor_id": 1,
+                "attributes": {
+                    "member_id": "NGYP94Q",
+                    "member_type": "CONSUMER",
+                    "mobile": "+918099503185",
+                    "date_of_joining": "2019-02-22",
+                    "last_activity_date": "2019-02-24T03:18-03:00",
+                    "membership_stage": "2",
+                    "last_accrual_date": "2019-02-24T03:18-03:00",
+                    "last_redemption_date": "2019-02-24T03:18-03:00",
+                    "enrolling_sponsor": "1"
+                },
+                "multi_value_attributes": {},
+                "mto": {},
+                "loyalty_balances": {
+                    "1": 25
+                },
+                "affiliated_sponsors": {
+                    "1": true
+                }
+            },
+            "offer_actions": [
+                {
+                    "offer_id": "5",
+                    "rule_id": "tag",
+                    "type": "REWARD_POINTS",
+                    "subject": "1",
+                    "value_n": 10,
+                    "value_s": null,
+                    "operator": null,
+                    "privilege_quantity": 0,
+                    "attribute_type": null,
+                    "reward_tags": [
+                        "BASE"
+                    ]
+                }
+            ],
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "processing_date": "2019-02-25T16:06:13.838+0000",
+            "bit_id": "JSIIUPC0QI",
+            "points_rewarded": true,
+            "points_redeemed": false,
+            "status": "SUCCESS",
+            "error": null,
+            "errors": []
+            }
+
+
++ Response 400 (application/json)
+
+        //Token Expired
+        {
+            "error": {
+                "message": "Signature has expired.",
+                "code": "authentication_expired"
+            }
+        }
++ Response 400 (application/json)
+
+        //Invalid token passed
+        {
+               "error": {
+                "message": "Error decoding signature.",
+                "code": "authentication_failed"
+            }
+        }
+
+
++ Response 400 (application/json)
+
+        // invalid member details passed in request
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+9180995031s85",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                      "h_bit_currency":"INR",
+                    "h_bit_type": "PAYMENT_WITH_POINTS",
+                    "h_pay_in_amount": 5000,
+                    "h_pos_id": null,
+                    "h_program_id": 14
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T15:51:46.557+0000",
+            "bit_id": "JSKISFP9H5",
+            "errors": [
+                {
+                    "code": "MEMBER_NOT_FOUND",
+                    "message": "Member Not Found"
+                }
+            ],
+            "status": "FAILED",
+            "error": {
+                "code": "MEMBER_NOT_FOUND",
+                "message": "Member Not Found"
+            },
+            "points_rewarded": false,
+            "points_redeemed": false,
+            "member": null,
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "offer_actions": []
+        }
+
+
+## BIT CANCELLATION [/v1/bits/ ]
+
++ Cancel original bit
+
+    + Provide the feature to revert the actions of original bit.
+    + This will create a new BIT with reverted offer actions.
+    + If points were rewarded in original bit, then it will redeemed or vice versa.
+
+### Cancel BIT [POST]
+
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
+
+    + Body
+
+             {
+                  "h_member_login": "+918099503185",
+                  "h_bit_category": "CANCELLATION",
+                  "h_program_id":14,
+                  "h_sponsor_id": 1,
+                  "h_bit_date":"2019-02-25T03:18-03:00",
+                  "cancel_bit_id": "JSIIUPC0QI",
+                  "h_pos_id":null,
+                  "h_cashier_id":null,
+                  "h_location":null
+
+            }
+
++ Response 201 (application/json)
+
+
+    + Body
+
+             {
+                "original_bit": {
+                    "header": {
+                        "h_member_login": "+918099503185",
+                        "h_bit_category": "CANCELLATION",
+                        "h_program_id": 14,
+                        "h_sponsor_id": 1,
+                        "h_bit_date": "2019-02-25T03:18-03:00",
+                        "cancel_bit_id": "JSIIUPC0QI",
+                        "h_member_id": "NGYP94Q"
+                    },
+                    "lines": [],
+                    "payment_details": []
+                },
+                "processing_date": "2019-02-25T16:18:51.159+0000",
+                "bit_id": "JSJYAK00E6",
+                "errors": [],
+                "status": "SUCCESS",
+                "error": null
+            }
+
+
++ Response 400 (application/json)
+
+        //Token Expired
+        {
+            "error": {
+                "message": "Signature has expired.",
+                "code": "authentication_expired"
+            }
+        }
++ Response 400 (application/json)
+
+        //Invalid token passed
+        {
+               "error": {
+                "message": "Error decoding signature.",
+                "code": "authentication_failed"
+            }
+        }
++ Response 406 (application/json)
+
+        //Invalid cancel BIT ID
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+918099503185",
+                    "h_bit_category": "CANCELLATION",
+                    "h_program_id": 14,
+                    "h_sponsor_id": 1,
+                    "h_bit_date": "2019-02-25T03:18-03:00",
+                    "cancel_bit_id": "JSIIUPsC0QI",
+                    "h_pos_id": null,
+                    "h_location": null,
+                    "h_member_id": "NGYP94Q"
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T16:22:56.019+0000",
+            "bit_id": "JSJYAK00FX",
+            "errors": [
+                {
+                    "code": "BIT_NOT_FOUND",
+                    "message": "Bit not found"
+                }
+            ],
+            "status": "FAILED",
+            "error": {
+                "code": "BIT_NOT_FOUND",
+                "message": "Bit not found"
+            }
+        }
+
++ Response 400 (application/json)
+
+        // invalid member details passed in request
+        {
+            "original_bit": {
+                "header": {
+                    "h_member_login": "+9180995031s85",
+                    "h_bit_date": "2019-02-24T03:18-03:00",
+                    "h_sponsor_id": 1,
+                    "h_bit_category": "ACCRUAL",
+                    "h_location": null,
+                    "h_bit_type": "PAYMENT_WITH_POINTS",
+                    "h_pay_in_amount": 5000,
+                    "h_pos_id": null,
+                    "h_program_id": 14
+                },
+                "lines": [],
+                "payment_details": []
+            },
+            "processing_date": "2019-02-25T15:51:46.557+0000",
+            "bit_id": "JSKISFP9H5",
+            "errors": [
+                {
+                    "code": "MEMBER_NOT_FOUND",
+                    "message": "Member Not Found"
+                }
+            ],
+            "status": "FAILED",
+            "error": {
+                "code": "MEMBER_NOT_FOUND",
+                "message": "Member Not Found"
+            },
+            "points_rewarded": false,
+            "points_redeemed": false,
+            "member": null,
+            "assigned_privileges": [],
+            "availed_privileges": [],
+            "offer_actions": []
+        }
+
+
+
+## Bit List [/v1/bits/{?member_id,sponsor_id,location,product_id,date_from,date_to,bit_type}]
+
+Bit List API is used to get activities (behaviour, transcation and influence) of a member.
+For example, Making a transaction for 100 Pesos or Watching a promotional video.
+
+It can be filtered for a member, sponsor, location, product, date range and bit type or for combination of them. For filtering, criteria have to be passed as query string parameters.
+
+    * `date_from` and `date_to` should be of the format 'YYYY-MM-DD'. These fields are used to filter bits by date range.
+
+
+| Description       | Paramemter Name   |
+|-------------------|-------------------|
+| member id         | `member_id`       |
+| sponsor/merchant id|`sponsor_id`      |
+| location code     | `location`        |
+| product id        | `product_id`      |
+| date from         | `date_from`       |
+| date to           | `date_to`         |
+| bit's type        |  `bit_type`       |
+| bit's cateogrty   | `bit_category`    |
+| bit's ID          | `bit_id`          |
+| invoice-id /      |`h_bit_source_generated_id`|
+| a success of failed bit|`bit_status`|
+
+* Bits are sorted on `h_bit_date` by default.
+
+### Get All Bits [GET]
+Pagination - This API uses pagination as explained above
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+            Authorization: "JWT {Your Authorization Token}"
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 4,
+                "member_id": "abc",
+                "bit_reference": "IWTA47FKV4",
+                "header":
+                {
+                    "h_bit_date": "2016-12-31T08:18:20Z",
+                    "h_bit_amount": "1200",
+                    "h_location": "Kondapur",
+                    "offer_id": "189",
+                    "h_bit_category": "Accrual",
+                    "h_product_id": "10",
+                    "h_program_id": "4",
+                    "h_member_id": "ShTruhca",
+                    "h_sponsor_id": "1",
+                    "h_bit_type": "Buy"
+                    "lines": [
+                        {"l_amount": "200.0",
+                         "l_quantity": "2",
+                         "l_product_external_id": "2626"},
+                        {"l_amount": "500.0",
+                        "l_quantity": "1",
+                        "l_product_external_id": "1110"},
+                        {"l_amount": "325.0",
+                         "l_quantity": "1",
+                         "l_product_external_id": "903"},
+                        {"l_amount": "475.0",
+                         "l_quantity": "1",
+                         "l_product_external_id": "2453"}
+                    ]
+                },
+                "offer_actions":
+                [
+                    {
+                      "subject_level": "MA_A",
+                      "rule_id": "1",
+                      "value_n": 1200,
+                      "offer_id": 189,
+                      "subject_name": "Points Eaned",
+                      "value_s": null,
+                      "type": "UPDATE_ATTRIBUTE",
+                      "subject": "MA_A.Points Eaned"
+                    },
+                    {
+                      "rule_id": "1",
+                      "value_n": 1200,
+                      "offer_id": 189,
+                      "subject_name": "PxPoints",
+                      "value_s": null,
+                      "type": "REWARD_POINTS",
+                      "subject": "27"
+                    },
+                    {
+                      "rule_id": "1",
+                      "value_n": 0,
+                      "offer_id": 189,
+                      "subject_name": "Points",
+                      "value_s": null,
+                      "type": "REWARD_POINTS",
+                      "subject": "9"
+                    }
+                ],
+
+                "h_bit_date": "2016-12-31T08:18:20Z",
+                "h_location": "Kondapur",
+                "h_program_id": 4,
+                "h_sponsor_id": 3,
+                "offer_id": 189,
+                "h_bit_category": "ACCRUAL",
+                "status": "SUCCESS",
+                "processed_date": null,
+                "lines": null,
+                "errors": [],
+                "country": null,
+                "region": null,
+                "city": null,
+                "area": null,
+                "sponsor_name": "Innovacx11"
+            }
+        ]
+
+
+Following are the details of BIT/activity attributes (header and line level attributes)
+
+### Header Level Activity Attributes
+| BIT/Activity Attributes      | Description                                                                                                             | Datatype | Example Values                                           |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------|----------|----------------------------------------------------------|
+| h_bit_amount             | Total transaction amount without taxes and tip (Pre-tax amount)                                                         | Number   |                                                          |
+| h_bit_category           | BIT Category                                                                                                            | Lookup   | ACCRUAL: For BIT API, AVAILMENT: For availing a privilege|
+| h_bit_date               | Timestamp in ISO                                                                                                        | Date     |                                                          |
+| h_bit_source             | The source of BIT Generation                                                                                            | Lookup   | POS                                                      |
+| h_bit_source_generated_id| Bill/Invoice Number                                                                                                     | Text     |                                                          |
+| h_bit_type               | Bit Type                                                                                                                | Lookup   | PAYMENT_WITH_POINTS : For payment using points only(without accruals), BUY : For any 'ACCRUAL' type of transactions that may or may not include payment using points|
+| h_location               | Sponsor Location Id                                                                                                     | Text     |                                                          |
+| h_member_id              | Member Id. You can optionally put login attribute, i.e, "mobile" instead of "h_member_id".                              | Text     |                                                          |
+| h_original_bit_amount    | Total transaction amount after taxes and tip (Post-tax amount)                                                          | Number   |                                                          |
+| h_payment_mode           | Mode of payment                                                                                                         | Lookup   | CREDIT, DEBIT, EWALLET: For Paytm/Mobikwik or any other wallet, CASH, NETBANKING|
+| h_pos_id                 | Unique Id of the PoS machine                                                                                            | Text     |                                                          |
+| h_privilege_id           | Privilege Code the member has received through SMS,Email or In-App                                                      | Text     |                                                          |
+| h_program_id             | Tenant Id (Will be communicated to you separately)                                                                      | Number   |                                                          |
+| h_representative_id      | PoS Representative ID who generated the transaction                                                                     | Text     |                                                          |
+| h_sponsor_id             | Sponsor Id (Will be communicated to you separately)                                                                     | Number   |                                                          |
+| pay_in_points            | Amount to be paid using points at the time of payment                                                                   | Number   |                                                          |
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Line Level Activity Attributes
+| Activity Attributes  | Description                                                                                                                          | Datatype |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------|
+| l_amount             | Line level amount (Total amount paid for the Product/s in billing)                                                                   | Number   |
+| l_product_external_id| Product Id / SKU used to setup the product at Point of Sale System                                                                   | Text     |
+| l_product_name       | Product name as setup at the Point of Sale System                                                                                    | Text     |
+| l_quantity           | Number of products at line level                                                                                                     | Number   |
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+## Family Invite [/v1/members/family/{member_id}/invitations/]
+
+### Create Family invite [POST]
+
++ Description
+
+    + Creates and sends a invite to join the family
+    + member_id is the member id for the inviter (family head)
+    + If the inviter is a family member then `family_member_error` is raised
+    + If the invitee is already in some other family then `family_member_exists` error is raised
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
+
+    + Body
+
+            {
+                "invitee_email": "abc@lji.io",
+                "invitee_is_minor": false
+            }
+
++ Response 201 (application/json)
+
+
+    + Body
+
+            {
+                "id": 107,
+                "status": "PENDING",
+                "invitee_email": "abc@lji.io",
+                "invitee_mobile": null,
+                "created_ts": "2019-07-12T12:42:43.796491+03:00",
+                "updated_ts": "2019-07-12T12:42:43.796546+03:00",
+                "invitee_is_minor": false,
+                "inviter_member_id": "5FX14KO",
+                "invitee_member_id": null
+}
+
+### List Family invite [GET]
+
++ Description
+
+    + Lists all the invites created by the family head
+    + member_id is the member id for the inviter (family head)
+
+*Response Attributes*
+
+|  Attributes         | Description                                                                   | Type   | Example Values                  |
+|---------------------|-------------------------------------------------------------------------------|--------|---------------------------------|
+| id                  | Invitation id                                                                 |Number  | 1                               |
+| status              |  Status of invitation                                                         |Text    | PENDING, ACCEPTED, REJECTED     |
+| inviter_member_id   | member id of inviter                                                          |Text    | POLI42X                         |
+| invitee_member_id   | member id of inviee (if already registered)                                   |Text    | JOLI423                         |
+| invitee_email       | email of invitee                                                              |Text    | example@example.comm            |
+| invitee_mobile      | mobile of invitee                                                             |Text    | +122495948989                   |
+| invitee_is_minor    | inidicates if the inivitee is a minor                                         |Boolean | True                            |
+| created_ts          | timestamp when the invite was created                                         |Datetime| 2019-01-28T17:53:19.525351+05:30|
+| updated_ts          | timestamp when the invite was last updated                                    |Datetime| 2019-01-28T17:53:19.525351+05:30|
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
++ Response 200 (application/json)
+
+[
+    {
+        "id": 107,
+        "status": "PENDING",
+        "invitee_email": "abc@lji.io",
+        "invitee_mobile": null,
+        "created_ts": "2019-07-12T12:42:43.796491+03:00",
+        "updated_ts": "2019-07-12T12:42:43.796546+03:00",
+        "invitee_is_minor": false,
+        "inviter_member_id": "5FX14KO",
+        "invitee_member_id": null
+    }
+]
+
+## Family Invite Action [/v1/members/family/{member_id}/invitations/<invitation_id>/action/]
+
+### Accept Family Invite [POST]
+
++ Description
+
+    + Updates invite status and add inviter as family head of invitee if the invite was accepted
+    + member_id is the member id for the invitee
+    + invitation_id is the invite id received by the invitee
+    + value of `status` is payload can be `accepted` or `rejected`
+    + If the invitee already belongs to a family then `family_exists` is raised
+    + If the family head's family limit is reached then `family_limit_error` is raised
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
+
+    + Body
+
+            {
+                "status": "accepted"
+            }
+
++ Response 200 (application/json)
+
+
+    + Body
+
+            {
+                "status": "accepted"
+            }
+
+## Retrieve Family Invite [/v1/members/family/{member_id}/invitations/<invitation_id>/]
+
+### Retrieve Invite [GET]
+
++ Description
+
+    + API to be called by invitee to retrieve invite details
+    + member_id is the member id for the invitee
+    + invitation_id is the invite id received by the invitee
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
+
++ Response 200 (application/json)
+
+
+    + Body
+
+            {
+                    "id": 108,
+                    "status": "accepted",
+                    "invitee_email": "abc@lji.io",
+                    "invitee_mobile": null,
+                    "created_ts": "2019-07-12T13:05:25.784414+03:00",
+                    "updated_ts": "2019-07-12T13:05:38.085495+03:00",
+                    "invitee_is_minor": false,
+                    "inviter_member_id": "5FX14KO",
+                    "invitee_member_id": "P8QPEPX"
+
+            }
+
+## Leave Family Group [/v1/members/family/{member_id}/leave/]
+
+### Leave Family [POST]
+
+Family member can use this API to leave the family.
+Once family_member leaves family, he becomes normal member.
+
+
++ Request
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+            Authorization: "JWT {Token}"
+
+
+
++ Response 200 (application/json)
+
+
+    + Body
+    {}
+
+
+## Family Details [/v1/members/family/{member_id}/]
+
+### List Family Member Details [GET]
+
++ Description
+
+    + Lists the family members for the given family head
+    + <member_id> is the member id of the family head
+    + Response attributes are the same as the ones defined in https://gravtyintegration.docs.apiary.io/#reference/0/specific-member/list-family-member-details
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "Bearer {token}"
+            x-api-key: "{x-api-key}"
+
+
++ Response 200 (application/json)
+
+
+    + Body
+
+            [
+              {
+                "id": 2,
+                "user": {
+                  "email": "shyam.shah@bankofloyal.com",
+                  "first_name": "Shyam",
+                  "last_name": "Shah"
+                },
+                "member_id": "ABCD123",
+                "salutation": "",
+                "member_name": "Shyam Shah",
+                "middle_name": "",
+                "date_of_birth": null,
+                "gender": null,
+                "mobile": "+911122334455",
+                "address_line1": null,
+                "address_line2": null,
+                "area": null,
+                "city": null,
+                "region": null,
+                "zipcode": null,
+                "country": null,
+                "enrolling_sponsor": 1,
+                "enrolling_location": null,
+                "enrollment_channel": "WEBSITE",
+                "family_head": "guru.prasandh@bankofloyal.com",
+                "family_head_points_share": 20,
+                "family_type": "FAMILY_MEMBER",
+                "facebook_id": null,
+                "enrollment_referrer": "<Referrer Member ID>",
+                "balances": [
+                  {
+                    "loyalty_account": "Points",
+                    "total_accrued": 100.6,
+                    "total_redeemed": 0,
+                    "balance": 100.6
+                  }
+                ],
+                "points_expiration": [
+                  {
+                    "points": 100.6,
+                    "loyalty_account": "Points",
+                    "expiration_date": "2018-05-01T23:59:59-06:37"
+                  }
+                ],
+                "extra_data": {}
+              },
+              {
+                "id": 3,
+                "user": {
+                  "email": "samir.shah@bankofloyal.com",
+                  "first_name": "Samir",
+                  "last_name": "Shah"
+                },
+                "member_id": "XYZ1234",
+                "salutation": "",
+                "member_name": "Samir Shah",
+                "middle_name": "",
+                "date_of_birth": null,
+                "gender": null,
+                "mobile": "+919988776655",
+                "address_line1": null,
+                "address_line2": null,
+                "area": null,
+                "city": null,
+                "region": null,
+                "zipcode": null,
+                "country": null,
+                "enrolling_sponsor": 1,
+                "enrolling_location": null,
+                "enrollment_channel": "WEBSITE",
+                "family_head": "guru.prasandh@bankofloyal.com",
+                "family_type": "FAMILY_MEMBER",
+                "facebook_id": null,
+                "enrollment_referrer": "<Referrer Member ID>",
+                "balances": [
+                  {
+                    "loyalty_account": "Points",
+                    "balance": 0
+                  }
+                ],
+                "points_expiration": null,
+                "extra_data": {}
+              }
+            ]
+
+### Delete Family [DELETE]
+
++ Description
+
+    + Dissolves the family members for the given family head
+    + <member_id> is the member id of the family head
+    + `family_head_required` error is raised if the member_id is not for a family head
+
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+            x-api-key: "{x-api-key}"
+
+
++ Response 204 (application/json)
+
+
+## Family Point Contribution [/v1/members/family/{member_id}/contributions/?from_date=2018-01-01&to_date=2018-02-02]
++ Parameters
+    + member_id (string) - member id of family head
+
+### Get points contributions [GET]
+Returns points contributed to the family head by each family member per loyalty account.
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+
++ Response 200 (application/json)
+
+           {
+                "family_head_member_id": "Q1BLEC5",
+                "total_contribution": 1825,
+                "contributions": {
+                    "7PE3PDT": {
+                        "member_name": "Sougandhi Vangala",
+                        "loyalty_accounts_contribution": {
+                            "Points": 1750
+                        }
+                    },
+                    "CURUL52": {
+                        "member_name": "Prasad Gudipalli",
+                        "loyalty_accounts_contribution": {
+                            "Points": 75
+                        }
+                    }
+                },
+                "loyalty_account_contributions": {
+                    "Points": 1825
+            }
+        }
+
+## Family Point Contribution [/v1/members/family/{member_id}/contributions/?from_date=2018-01-01&to_date=2018-02-02]
++ Parameters
+    + member_id (string) - member id of family member
+
+### Get points contributions [GET]
+Returns points contributed by the family member to family head per loyalty account.
++ Request (application/json)
+    + Headers
+
+            Authorization: "JWT {token}"
+
++ Response 200 (application/json)
+
+           {
+                "total_contribution": 75,
+                "family_heads": {
+                "Q1BLEC5": 75
+            }
+
+## Change Password [/v1/accounts/change-password/]
+### Change Password [PUT]
+
++ Description
+This API is used to change the current password of a member to a new password. For changing password member should know his current password.
+
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+            Authorization: "JWT {Token}"
+
+    + Body
+
+            {
+                "current_password": "Test123",
+                "password": "Testing123"
+            }
+
+
++ Response 200 (application/json)
+
+
+    + Body
+    {
+
+        "status": "success",
+        "message": "Password set successfully",
+        "auth_key": "e157c84e94616b4684d5904ece7004238cde1de2",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozNzc4MTIxLCJ1c2VybmFtZSI6IldDTURPVDQiLCJleHAiOjE1NjMyNzI2NjEsImVtYWlsIjoiZ3JhdnR5cWErMjM2QGdtYWlsLmNvbSIsIm9yaWdfaWF0IjoxNTYzMjU4MjYxfQ.cD1cK4qEbzUpAeHu3zJUfL7uZH40e8fWcdAJMb__sHA",
+        "expires_in": "14400"
+
+    }
+
+### Reset Password
+### Reset Password [/api/v1/accounts/reset-password/]
+### Reset Password [PUT]
+
++ Description
+
+    This API is used to reset password for a member. Resetting password is a two step process:
+
+        1. Triggering Reset Key.
+        2. Updating password by submitting the reset key.
+
+
+
+
+
+
+
+## Trigger Reset Key [/v1/accounts/reset-password/]
+### Trigger Reset Key [POST]
++ Description
+
+     + When Trigger_Reset_key API is called then member receives 'Reset-key' in his email (email which is entered during reset password).
+
+
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+
+    + Body
+
+            {
+                "email": "xyz@lji.io",
+                "mobile": "9878787654",
+                "channel": "Website"
+            }
+
+
++ Response 200 (application/json)
+
+
+    + Body
+    {
+        "status": "success"
+    }
+
+
+
+### Update Password Using Reset Key [/v1/accounts/do-reset-password/]
+### Update Password Using Reset Key [POST]
++ Description
+
+     + Last step in Password-Reset requires sending Reset-key.
+     + When Reset-key is received by member in his email then this API is called and reset key is passed in this API's body.
+
++ Request (application/json)
+
+    + Headers
+
+            x-api-key: "{Your API Key}"
+
+    + Body
+
+            {
+                "email": "xyz@lji.io",
+                "new_password": "9878787654",
+                "confirm_password": "Website",
+                "reset_key":"514005"
+            }
+
+
++ Response 200 (application/json)
+
+
+    + Body
+    {
+        "status": "success"
+    }
