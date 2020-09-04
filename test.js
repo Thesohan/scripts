@@ -40,7 +40,9 @@ function parseData(contents){
 function validate_data(data) {
 
     protagonist.validate(data).then((parseResult) => {
-    parseData(parseResult["content"])
+        if(parseResult){
+            parseData(parseResult["content"])
+        }
   })
   .catch((error) => {
     console.error(error);
