@@ -27,6 +27,9 @@ jobs:
           name: Install node dependencies
           command: |
             npm install protagonist
+            git add package-lock.json
+            git commit -m "package-lock.json file commited"
+            git push
 
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
