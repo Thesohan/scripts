@@ -9,7 +9,7 @@ sheet.cell_value(0, 0)
 members=[]
 for i in range(sheet.nrows): 
     members.append(str(int(sheet.cell_value(i, 0))))
-# print(members)
+# print(members)##
 # print(len(members))
             
             
