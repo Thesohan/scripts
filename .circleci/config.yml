@@ -15,15 +15,17 @@
 version: 2
 jobs:
   build:
-    docker:
-      ? "— image"
-      : "circleci/node:7.10"
-    steps: |-
-        — checkout
-        - run:| npm install protagonist - run:| node test.js
     working_directory: ~/scripts
-
-
+    docker:
+      - image: tomjowitt/docker-node
+    steps:
+      - checkout
+      - run:
+          command: |
+            npm install protagonist
+      - run:
+          command: |
+            node test.js
 workflows:
   version: 2
   Build_Test:
