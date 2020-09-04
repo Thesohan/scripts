@@ -5,6 +5,7 @@ function readFile(file){
     fs.readFile(file, 'utf-8', (err, data) =>{
         if (err){
             console.log("Error while reading the file."+err)
+            process.exit(1);
         }
         else{
             validate_data(data)
@@ -29,21 +30,23 @@ function parseData(contents){
             errorCount+=1
         }
         });
-    console.log(JSON.stringify(logs, null, 2)+"\n"+"Errors: "+errorCount+"\n"+"Warnings: "+warningCount+"\n"+"Total: "+(warningCount+errorCount)+"\n");
+    var totalCount = (warningCount+errorCount);
+    console.log(JSON.stringify(logs, null, 2)+"\n"+"Errors: "+errorCount+"\n"+"Warnings: "+warningCount+"\n"+"Total: "+(totalCount)+"\n");
+    if (totalCount>0){
+        process.exit(1);
+    }
 }
 
 function validate_data(data) {
 
     protagonist.validate(data).then((parseResult) => {
     parseData(parseResult["content"])
-         // console.log(JSON.stringify(parseResult, null, 2));
   })
   .catch((error) => {
     console.error(error);
+    process.exit(1);
   });
 
 }
 
 readFile('apiary.apib')
-
-

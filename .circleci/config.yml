@@ -20,9 +20,19 @@ jobs:
       - image: tomjowitt/docker-node
     steps:
       - checkout
+      - restore_cache:
+          key: bolapi-npm-{{ checksum "package.json" }}-{{checksum "package-lock.json" }}
+
       - run:
+          name: Install node dependencies
           command: |
             npm install protagonist
+
+      - save_cache:
+          key: bolapi-npm-{{ checksum "package.json" }}-{{checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
       - run:
           command: |
             node test.js
@@ -31,3 +41,4 @@ workflows:
   Build_Test:
     jobs:
       - build
+
