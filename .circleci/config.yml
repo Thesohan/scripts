@@ -21,7 +21,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: bolapi-npm-{{checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
 
       - run:
           name: Install node dependencies
@@ -29,9 +29,9 @@ jobs:
             npm install protagonist
 
       - save_cache:
-          key: bolapi-npm-{{checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
-            ~/scripts
+           - ./node_modules
 
       - run:
           command: |
