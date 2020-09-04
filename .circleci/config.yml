@@ -11,15 +11,15 @@
 #    # Run the welcome/run job in its own container
 #    jobs:
 #      - welcome/run
-
-version: 2
+---
 jobs:
   build:
     docker:
-      — image: circleci/node:7.10
+      ? "— image"
+      : "circleci/node:7.10"
+    steps: |-
+        — checkout
+        - run:| npm install protagonist - run:| npm test
     working_directory: ~/scripts
-    steps:
-      — checkout
-      - run: npm install
-
-      — run: npm test
+version: 2
+...
