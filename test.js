@@ -49,6 +49,7 @@ function validate_data(data) {
     process.exit(1);
   });
 
+
 }
 
 readFile('apiary.apib')
