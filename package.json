@@ -1,14 +1,7 @@
 {
   "name": "api-blueprint-validator",
-  "version": "0.1.3",
   "description": "API Blueprint Validator",
   "author": "sohan kathait <sohan.kathait@lji.io>",
-  "bin": {
-    "api-blueprint-validator": "bin/api-blueprint-validator"
-  },
-  "engines": {
-    "node": ">=0.11.x"
-  },
   "dependencies": {
     "protagonist": "^2.2.1"
   }

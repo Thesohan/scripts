@@ -39,6 +39,8 @@ function parseData(contents){
 
 function validate_data(data) {
 
+
+
     protagonist.validate(data).then((parseResult) => {
         if(parseResult){
             parseData(parseResult["content"])
