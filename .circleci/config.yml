@@ -11,7 +11,9 @@ jobs:
 
       - run:
           name: Installing node dependencies
-          command: npm install
+          command: |
+            npm install protagonist
+            npm install aglio
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
