@@ -1,7 +1,7 @@
 version: 2
 jobs:
   API_Document:
-    working_directory: ~/scripts/d
+    working_directory: ~/scripts/notes
     docker:
       - image: circleci/node:9.9.0
     steps:
