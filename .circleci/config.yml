@@ -12,8 +12,9 @@ jobs:
 
       - run:
           name: Installing node dependencies
-          command: npm install --save smallest
-
+          command: |
+            npm install --save smallest
+            echo % {{"package.json"}}
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
