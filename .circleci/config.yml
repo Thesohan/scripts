@@ -5,8 +5,7 @@ jobs:
     docker:
       - image: circleci/node:9.9.0
     steps:
-      - checkout:
-          - ~/scripts
+      - checkout: ~/scripts
 
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
@@ -15,7 +14,7 @@ jobs:
           name: Installing node dependencies
           command: |
             npm install --save smallest
-            echo %{{"package.json"}}
+
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
