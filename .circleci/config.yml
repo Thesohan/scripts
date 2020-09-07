@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Installing node dependencies
           command: |
-            npm install protagonist
+#            npm install protagonist
             npm install aglio
 
       - save_cache:
