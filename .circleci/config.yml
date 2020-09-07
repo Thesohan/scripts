@@ -15,9 +15,10 @@ jobs:
           command: npm install
 
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
           paths:
-            - ~/.M2
+            - ~/scripts
+          key: dependency-cache-{{ checksum "package.json" }}
+
 
       - run:
           name: Blueprint validator
