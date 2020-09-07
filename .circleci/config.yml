@@ -16,7 +16,8 @@ jobs:
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-          paths: ~/.npm
+          paths:
+            - ~/.M2
 
       - run:
           name: Blueprint validator
