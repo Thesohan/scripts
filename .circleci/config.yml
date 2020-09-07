@@ -9,10 +9,10 @@ jobs:
 
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-#
-#      - run:
-#          name: Installing node dependencies
-#          command: npm install
+
+      - run:
+          name: Installing node dependencies
+          command: npm install
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
