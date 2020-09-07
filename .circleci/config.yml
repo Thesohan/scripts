@@ -1,12 +1,12 @@
 version: 2
 jobs:
   API_Document:
-    working_directory: ~/scripts
+    working_directory: ~/scripts/d
     docker:
       - image: circleci/node:9.9.0
     steps:
       - checkout:
-          - ~/
+          - ~/scripts
 
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
