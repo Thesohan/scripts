@@ -13,8 +13,7 @@ jobs:
 
       - run:
           name: Installing node dependencies
-          command: |
-            npm install smallest
+          command: npm ci
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
