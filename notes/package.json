@@ -1,9 +1,0 @@
-{
-  "name": "api-blueprint-validator",
-  "description": "API Blueprint Validator",
-  "author": "sohan kathait <sohan.kathait@lji.io>",
-  "dependencies": {
-    "protagonist": "^2.2.1",
-    "aglio":"^2.3.0"
-  }
-}

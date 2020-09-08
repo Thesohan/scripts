@@ -3,6 +3,6 @@
   "description": "API Blueprint Validator",
   "author": "sohan kathait <sohan.kathait@lji.io>",
   "dependencies": {
-    "aglio": "^2.3.0"
+    "aglio":"^2.3.0"
   }
 }
